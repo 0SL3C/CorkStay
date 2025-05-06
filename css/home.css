@@ -4,9 +4,8 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    height: 50rem;
-}
-
+    background-image:url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpaperaccess.com%2Ffull%2F1404155.jpg&f=1&nofb=1&ipt=3968f703706face9514b7434d4efa4e08bd6d87fc69a98006e5619ad52404dbe');
+}  
 nav{
     text-align: center;
     display:flex;
