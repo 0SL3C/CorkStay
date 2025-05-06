@@ -6,17 +6,36 @@ if ($conn->connect_error) {
 }
 
 $results = [];
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
-    $price = $_GET['price'];
-    $bedrooms = $_GET['bedrooms'];
+// Base query
+$query = "SELECT p.title, p.rental_price, p.category, p.image, u.first_name AS landlord_name FROM properties p JOIN users u ON p.landlord_id = u.user_id WHERE 1=1";
+$params = [];
+$types = "";
 
-    $query = "SELECT title, rental_price, category FROM properties WHERE rental_price <= ? AND category = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("di", $price, $bedrooms);
-    $stmt->execute();
-    $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+// If filters are applied
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
+    if (!empty($_GET['price'])) {
+        $query .= " AND rental_price <= ?";
+        $types .= "d";
+        $params[] = $_GET['price'];
+    }
+
+    if (!empty($_GET['bedrooms'])) {
+        $category = intval($_GET['bedrooms']) . " bed";
+        $query .= " AND category = ?";
+        $types .= "s";
+        $params[] = $category;
+    }
 }
+
+$stmt = $conn->prepare($query);
+
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+
+$stmt->execute();
+$results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
         }
 
         .container {
-            max-width: 600px;
+            max-width: 700px;
             margin: 80px auto;
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
@@ -98,51 +117,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['search'])) {
         }
 
         li {
-            background-color: #f2f2f2;
-            padding: 12px;
+            background-color: #f9f9f9;
+            padding: 15px;
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        li img {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .property-details {
+            flex: 1;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Search Properties</h2>
-        <form method="GET" action="search.php">
-            <label for="price">Max Rent Price (€):</label>
-            <input type="number" id="price" name="price" required>
+<div class="container">
+    <h2>Search Properties</h2>
+    <form method="GET" action="search.php">
+        <label for="price">Max Rent Price (€):</label>
+        <input type="number" id="price" name="price">
 
-            <label for="bedrooms">Bedrooms:</label>
-            <input type="number" id="bedrooms" name="bedrooms" required>
+        <label for="bedrooms">Bedrooms:</label>
+        <input type="number" id="bedrooms" name="bedrooms">
 
-            <input type="submit" name="search" value="Search">
-        </form>
+        <input type="submit" name="search" value="Search">
+    </form>
 
-        <?php if (!empty($results)): ?>
-            <h3>Search Results:</h3>
-            <ul>
-                <?php foreach ($results as $property): ?>
-                    <li>
-                        <?php echo htmlspecialchars($property['title']); ?> - 
-                        €<?php echo htmlspecialchars($property['rental_price']); ?> - 
-                        <?php echo htmlspecialchars($property['bedrooms']); ?> bedrooms
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-    <p style="text-align: center; margin: 20px 0px 0px 0px;">
-    <a href="home.php" style="
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #2196F3;
-        color: white;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: bold;
-    ">← Go Back</a>
-    </div>
+    <?php if (!empty($results)): ?>
+        <h3>Search Results:</h3>
+        <ul>
+            <?php foreach ($results as $property): ?>
+                <li>
+                    <?php if (!empty($property['image']) && file_exists($property['image'])): ?>
+                        <img src="<?php echo htmlspecialchars($property['image']); ?>" alt="Property image">
+                    <?php else: ?>
+                        <img src="./images/placeholder.jpg" alt="No image available">
+                    <?php endif; ?>
+                    <div class="property-details">
+                        <strong><?php echo htmlspecialchars($property['title']); ?></strong><br>
+                        €<?php echo htmlspecialchars($property['rental_price']); ?><br>
+                        <?php echo htmlspecialchars($property['category']); ?><br>
+                        <em>Landlord: <?php echo htmlspecialchars($property['landlord_name']); ?></em>
+                    </div>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <p style="text-align:center; margin-top: 20px;">No properties found.</p>
+    <?php endif; ?>
 
-</p>
+    <p style="text-align: center;">
+        <a href="home.php" class="back-btn">← Go Back</a>
+    </p>
+</div>
 </body>
 </html>
 
