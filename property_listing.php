@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'landlord') {
     exit();
 }
 
-$conn = mysqli_connect('localhost', 'root', '', 'corkstay');
+$conn = mysqli_connect('localhost', 'root', '159753', 'corkstay');
 if ($conn->connect_error) {
     die("Error connecting to database: " . $conn->connect_error);
 }
