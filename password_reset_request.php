@@ -1,7 +1,9 @@
 <?php
-$conn = mysqli_connect('localhost', 'root', '', 'corkstay')
+session_start();
+$conn = mysqli_connect('localhost', 'root', '', 'corkstay');
+
 if ($conn->connect_error) {
-    die("Error connecting to database: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
 
 $errors = [];
