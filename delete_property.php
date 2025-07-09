@@ -1,25 +1,34 @@
 <?php
-session_start();
+require_once 'config.php';
+
+// Initialize session with timeout handling
+initSession();
+
+// Get database connection
+$conn = getDbConnection();
+
+// Checks if the user is logged in as landlord
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'landlord') {
-    header("Location: home.php");
-    exit();
+    header("Location: login.php");
+    exit;
 }
 
-$conn = mysqli_connect('localhost', 'root', '159753', 'corkstay');
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+$property_id = $_GET['id'] ?? null;
 
-if (isset($_GET['id'])) {
-    $property_id = (int)$_GET['id'];
-
-    // Make sure the property belongs to this landlord
+if ($property_id) {
+    // Ensures that the user can only delete properties that he owns
     $stmt = $conn->prepare("DELETE FROM properties WHERE id = ? AND landlord_id = ?");
     $stmt->bind_param("ii", $property_id, $_SESSION['user_id']);
-    $stmt->execute();
-    $stmt->close();
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        header("Location: property_listing.php?deleted=1");
+        exit;
+    } else {
+        $stmt->close();
+        echo "Error: Could not delete property.";
+    }
+} else {
+    echo "Error: Property ID not provided.";
 }
-
-header("Location: property_listing.php");
-exit();
-
+?>

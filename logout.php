@@ -1,7 +1,12 @@
 <?php
 session_start();
-session_unset();
+
+// clean all sessios
+$_SESSION = [];
+
+// Destroy the session
 session_destroy();
-header("Location: home.php");
+
+// Redirect to login page
+header("Location: login.php");
 exit();
-?>
