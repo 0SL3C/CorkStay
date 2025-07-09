@@ -1,9 +1,11 @@
 <?php
-session_start();
-$conn = mysqli_connect('localhost', 'root', '', 'corkstay'); // ajuste a senha conforme necessário
-if ($conn->connect_error) {
-    die("Error connecting to database: " . $conn->connect_error);
-}
+require_once 'config.php';
+
+// Initialize session with timeout handling
+initSession();
+
+// Get database connection
+$conn = getDbConnection();
 
 $errors = [];
 

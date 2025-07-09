@@ -1,8 +1,8 @@
 <?php
-$conn = mysqli_connect('localhost', 'root', '', 'corkstay');
-if ($conn->connect_error) {
-    die("Error connecting to database: " . $conn->connect_error);
-}
+require_once 'config.php';
+
+// Get database connection (this file doesn't use sessions)
+$conn = getDbConnection();
 
 $errors = [];
 $success = false;

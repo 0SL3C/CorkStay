@@ -1,3 +1,31 @@
+# CorkStay - Property Rental Platform
+
+## Setup Instructions
+
+### Environment Variables Setup
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file with your actual database credentials:
+   ```
+   DB_HOST=your_database_host
+   DB_USERNAME=your_database_username
+   DB_PASSWORD=your_database_password
+   DB_NAME=your_database_name
+   SESSION_TIMEOUT=3600
+   ```
+
+3. Ensure the `.env` file is not committed to version control (it's already in `.gitignore`).
+
+### Database Setup
+
+Make sure your MySQL database is running and accessible with the credentials specified in your `.env` file.
+
+## Project Tasks
+
 | Task | Description | Priority | Status |
 |------|-------------|----------|--------|
 | **Database Setup** | | | |

@@ -1,18 +1,11 @@
 <?php
-session_start();
-$timeout = 3600; // 1 hour
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $timeout)) {
-    session_unset();
-    session_destroy();
-    header("Location: home.php");
-    exit();
-}
-$_SESSION['last_activity'] = time();
+require_once 'config.php';
 
-$conn = mysqli_connect('localhost', 'root', '', 'corkstay');
-if ($conn->connect_error) {
-    die("Error connecting to database: " . $conn->connect_error);
-}
+// Initialize session with timeout handling
+initSession();
+
+// Get database connection
+$conn = getDbConnection();
 
 $isLoggedIn = isset($_SESSION['user_id']);
 $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : null;
@@ -44,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
 
     // Check for duplicate email
     if (empty($errors)) {
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM Users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->bind_result($count);
@@ -58,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
     // Insert user if no errors
     if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO Users (first_name, email, password, role) VALUES (?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO users (first_name, email, password, role) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("ssss", $first_name, $email, $hashed_password, $role);
         if ($stmt->execute()) {
             // Log the user in

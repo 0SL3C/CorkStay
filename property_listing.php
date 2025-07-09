@@ -1,11 +1,12 @@
 
 <?php
-session_start();
-$conn = mysqli_connect('localhost', 'root', '', 'corkstay');
+require_once 'config.php';
 
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+// Initialize session with timeout handling
+initSession();
+
+// Get database connection
+$conn = getDbConnection();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'landlord') {
     header("Location: login.php");

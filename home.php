@@ -1,9 +1,11 @@
 <?php
-session_start();
-$conn = mysqli_connect('localhost', 'root', '', 'corkstay');
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
+require_once 'config.php';
+
+// Initialize session with timeout handling
+initSession();
+
+// Get database connection
+$conn = getDbConnection();
 
 $first_name = $_SESSION['first_name'] ?? '';
 $role = $_SESSION['role'] ?? null;
