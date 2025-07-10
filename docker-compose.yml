@@ -6,12 +6,20 @@ version: '3.8'
 services:
   # Web Application Service
   corkstay-app:
-    build: .                                   # Build from Dockerfile in current directory
+    # Option 1: Build from local Dockerfile (may not work with snap docker)
+    # build: .                                   # Build from Dockerfile in current directory
+    # Option 2: Use pre-built image from registry (recommended for snap docker)
+    image: yourusername/corkstay:latest
     container_name: corkstay-web               # Custom container name for easier management
     ports:
       - "8080:80"                              # Map host port 8080 to container port 80 (Apache)
     environment:
       - APP_ENV=production                     # Set application environment to production
+    # Configure DNS servers to fix resolution issues with snap docker
+    dns:
+      - 8.8.8.8                                # Google DNS primary
+      - 8.8.4.4                                # Google DNS secondary
+      - 1.1.1.1                                # Cloudflare DNS
     volumes:
       # Mount properties directory for persistent image storage
       - ./properties:/var/www/html/swd-corkstay/properties
