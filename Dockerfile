@@ -13,7 +13,7 @@ COPY corkstay-httpd.conf /etc/apache2/sites-available/corkstay-httpd.conf
 # Enable the virtual host
 RUN a2ensite corkstay-httpd.conf
 
-# Set the document root (important!)
+# Set the document root
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/swd-corkstay
 RUN sed -i "s|/var/www/html|${APACHE_DOCUMENT_ROOT}|g" /etc/apache2/sites-available/corkstay-httpd.conf /etc/apache2/apache2.conf
 

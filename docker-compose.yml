@@ -1,0 +1,47 @@
+# Docker Compose configuration for CorkStay Property Lettings Application
+# This sets up a multi-container environment with web app and database
+
+version: '3.8'
+
+services:
+  # Web Application Service
+  corkstay-app:
+    build: .                                   # Build from Dockerfile in current directory
+    container_name: corkstay-web               # Custom container name for easier management
+    ports:
+      - "8080:80"                              # Map host port 8080 to container port 80 (Apache)
+    environment:
+      - APP_ENV=production                     # Set application environment to production
+    volumes:
+      # Mount properties directory for persistent image storage
+      - ./properties:/var/www/html/swd-corkstay/properties
+    depends_on:
+      - corkstay-db                            # Ensure database starts before web app
+    networks:
+      - corkstay-network                       # Connect to custom network
+
+  # Database Service
+  corkstay-db:
+    image: mysql:8.0                           # Use official MySQL 8.0 image
+    container_name: corkstay-mysql             # Custom container name for easier management
+    environment:
+      # MySQL configuration - CHANGE THESE PASSWORDS IN PRODUCTION!
+      - MYSQL_ROOT_PASSWORD=rootpassword      # Root password for MySQL
+      - MYSQL_DATABASE=corkstay               # Create database named 'corkstay'
+      - MYSQL_USER=corkstay_user              # Create application user
+      - MYSQL_PASSWORD=corkstay_password      # Password for application user
+    volumes:
+      # Persistent storage for database data
+      - mysql_data:/var/lib/mysql
+      # Initialize database with SQL dump on first run
+      - ./corkstay.sql:/docker-entrypoint-initdb.d/corkstay.sql
+    networks:
+      - corkstay-network                       # Connect to custom network
+
+# Named volumes for persistent data storage
+volumes:
+  mysql_data:                                  # Persistent volume for MySQL data
+
+# Custom network for container communication
+networks:
+  corkstay-network:

@@ -90,8 +90,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `first_name`, `email`, `password`, `role`, `created_at`, `reset_token`, `reset_expiry`) VALUES
-(1, 'Sweetthoot', 'john@example.com', '$2y$10$123456789012345678901uMqkZhJlfYXUjpjZ2GzKfI1edSsq4HNu', 'landlord', '2025-04-22 21:58:18', NULL, NULL),
-(2, 'bolsonarotaok', 'mariataok@example.com', '$2y$10$abcdefghijABCDEFGHIJabcdefghijABCDEFGHIJabcdefghijABC', 'tenant', '2025-04-22 21:59:29', NULL, NULL);
+(1, 'Sweetthoot', 'john@example.com', '$2y$10$123456789012345678901uMqkZhJlfYXUjpjZ2GzKfI1edSsq4HNu', 'landlord', '2025-04-22 21:58:18', NULL, NULL);
 
 --
 -- Índices para tabelas despejadas
