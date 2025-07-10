@@ -1,11 +1,9 @@
 # Docker Compose configuration for CorkStay Property Lettings Application
 # This sets up a multi-container environment with web app and database
 
-version: '3.8'
-
 services:
   # Web Application Service
-  corkstay-app:
+  app:
     # Option 1: Build from local Dockerfile (may not work with snap docker)
     # build: .                                   # Build from Dockerfile in current directory
     # Option 2: Use pre-built image from registry (recommended for snap docker)
@@ -29,7 +27,7 @@ services:
       - corkstay-network                       # Connect to custom network
 
   # Database Service
-  corkstay-db:
+  db:
     image: mysql:8.0                           # Use official MySQL 8.0 image
     container_name: corkstay-mysql             # Custom container name for easier management
     environment:
