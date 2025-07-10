@@ -9,8 +9,6 @@ services:
     # Option 2: Use pre-built image from registry (recommended for snap docker)
     build: .
     container_name: corkstay-web               # Custom container name for easier management
-    ports:
-      - "8889:80"                              # Map host port 8080 to container port 80 (Apache)
     environment:
       - APP_ENV=production                     # Set application environment to production
     # Configure DNS servers to fix resolution issues with snap docker
@@ -22,10 +20,9 @@ services:
       # Mount properties directory for persistent image storage
       - ./properties:/var/www/html/swd-corkstay/properties
     depends_on:
-      - db                            # Ensure database starts before web app
+      - corkstay-db                            # Ensure database starts before web app
     networks:
       - corkstay-network                       # Connect to custom network
-
   # Database Service
   db:
     image: mysql:8.0                           # Use official MySQL 8.0 image

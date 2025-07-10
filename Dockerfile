@@ -15,10 +15,15 @@ RUN a2ensite corkstay-httpd.conf
 
 # Set the document root
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/swd-corkstay
+
+# Copy the application code into the container first
+COPY . /var/www/html/swd-corkstay/
+
+# Update the Apache configuration with the correct document root
 RUN sed -i "s|/var/www/html|${APACHE_DOCUMENT_ROOT}|g" /etc/apache2/sites-available/corkstay-httpd.conf /etc/apache2/apache2.conf
 
-# Enable rewrite module (if you use .htaccess)
-RUN a2enmod rewrite
+# Enable required Apache modules
+RUN a2enmod rewrite headers expires
 
 # Install necessary PHP extensions and dependencies
 RUN apt-get update && apt-get install -y \
@@ -26,9 +31,6 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     && docker-php-ext-install pdo pdo_mysql zip
-
-# Copy the application code into the container
-COPY . .
 
 # Set environment variables (if needed)
 ENV APP_ENV=production
