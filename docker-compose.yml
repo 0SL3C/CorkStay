@@ -7,7 +7,7 @@ services:
     # Option 1: Build from local Dockerfile (may not work with snap docker)
     # build: .                                   # Build from Dockerfile in current directory
     # Option 2: Use pre-built image from registry (recommended for snap docker)
-    image: yourusername/corkstay:latest
+    build: .
     container_name: corkstay-web               # Custom container name for easier management
     ports:
       - "8080:80"                              # Map host port 8080 to container port 80 (Apache)
