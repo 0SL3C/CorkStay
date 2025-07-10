@@ -22,7 +22,7 @@ services:
       # Mount properties directory for persistent image storage
       - ./properties:/var/www/html/swd-corkstay/properties
     depends_on:
-      - corkstay-db                            # Ensure database starts before web app
+      - db                            # Ensure database starts before web app
     networks:
       - corkstay-network                       # Connect to custom network
 
