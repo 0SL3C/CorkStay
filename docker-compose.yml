@@ -10,7 +10,7 @@ services:
     build: .
     container_name: corkstay-web               # Custom container name for easier management
     ports:
-      - "8080:80"                              # Map host port 8080 to container port 80 (Apache)
+      - "8889:80"                              # Map host port 8080 to container port 80 (Apache)
     environment:
       - APP_ENV=production                     # Set application environment to production
     # Configure DNS servers to fix resolution issues with snap docker
